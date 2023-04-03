@@ -7,18 +7,16 @@ export class AuthController {
 
   @Post('hello/world')
   helloWorld() {
-    return {
-      msg: 'hello world!',
-    };
+    return this.autchService.helloWorld();
   }
 
   @Post('signup')
   signup() {
-    return 'signup';
+    return this.autchService.signup();
   }
 
   @Post('signin')
   signin() {
-    return 'signin';
+    return this.autchService.signin();
   }
 }
