@@ -5,12 +5,12 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private autchService: AuthService) {}
 
-    @Post('hello/world')
-    helloWorld() {
-      return {
-        msg: 'hello world!',
-      };
-    }
+  @Post('hello/world')
+  helloWorld() {
+    return {
+      msg: 'hello world!',
+    };
+  }
 
   @Post('signup')
   signup() {
