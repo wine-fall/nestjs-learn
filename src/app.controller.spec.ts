@@ -16,7 +16,12 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return "signin"', () => {
-      expect(authController.signin()).toBe('signin');
+      expect(
+        authController.signin({
+          email: 'ttt@gmail.com',
+          password: '111-aaa',
+        }),
+      ).toBe('signin');
     });
   });
 });
