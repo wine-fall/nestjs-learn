@@ -1,11 +1,17 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
 import * as argon from 'argon2';
 import { User, Prisma } from '@prisma/client';
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private jwt: JwtService) {}
   helloWorld() {
     return {
       msg: 'hello world!',
@@ -20,8 +26,7 @@ export class AuthService {
           hash,
         },
       });
-      delete user.hash;
-      return user;
+      return this.signToken(user.email, user.id);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -42,8 +47,19 @@ export class AuthService {
     }
     const pwMatch = await argon.verify(user.hash, dto.password);
     if (!pwMatch) {
-      throw new ForbiddenException('Password incorrect');
+      throw new UnauthorizedException('Password incorrect');
     }
-    return user;
+    return this.signToken(user.email, user.id);
+  }
+
+  async signToken(email: string, id: number) {
+    const payload = {
+      email,
+      sub: id,
+    };
+    const jwtToken = await this.jwt.signAsync(payload, {});
+    return {
+      jwtToken,
+    };
   }
 }
