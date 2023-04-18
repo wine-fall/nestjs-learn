@@ -5,6 +5,7 @@ import { AppModule } from '../src/app.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from 'src/auth/dto';
 import { EditUserDto } from 'src/user/dto';
+import { CreateBookmarkDto } from 'src/bookmark/dto/dto.bookmark';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -108,7 +109,7 @@ describe('AppController (e2e)', () => {
     describe('edit profile', () => {
       it('should edit profile', () => {
         return spec()
-          .patch('/user/editProfile')
+          .patch('/user/edit/profile')
           .withHeaders({
             Authorization: 'Bearer $S{jwtToken}',
           })
@@ -117,5 +118,47 @@ describe('AppController (e2e)', () => {
           .expectBodyContains(dto.email);
       });
     });
+  });
+
+  describe('Bookmark', () => {
+    const createBookmarkDto: CreateBookmarkDto = {
+      title: "I'm a title",
+      link: 'www.google.com',
+      description: 'A test description',
+    };
+    it('should get an empty bookmark list', () => {
+      return spec()
+        .get('/bookmark/get/bookmarkList')
+        .withHeaders({
+          Authorization: 'Bearer $S{jwtToken}',
+        })
+        .expectBodyContains('[]');
+    });
+    describe('Create bookmark by user', () => {
+      it('should create a bookmark', () => {
+        return spec()
+          .post('/bookmark/create')
+          .withHeaders({
+            Authorization: 'Bearer $S{jwtToken}',
+          })
+          .withBody(createBookmarkDto)
+          .stores((req, res) => {
+            return {
+              id1: res.body.id,
+              name1: '111',
+            };
+          })
+          .expectStatus(201);
+      });
+    });
+
+    // it('should get a bookmark list contains an object', () => {
+    //   return spec()
+    //     .get('/bookmark/get/bookmarkList')
+    //     .withHeaders({
+    //       Authorization: 'Bearer $S{jwtToken}',
+    //     })
+    //     .expectJsonLength(1);
+    // });
   });
 });
