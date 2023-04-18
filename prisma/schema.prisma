@@ -23,11 +23,11 @@ model User {
 
   bookmarks Bookmark[]
 
-  @@map("User")
+  @@map("users")
 }
 
 model Bookmark {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
@@ -38,5 +38,5 @@ model Bookmark {
   userId      Int
   User        User   @relation(fields: [userId], references: [id])
 
-  @@map("Bookmark")
+  @@map("bookmarks")
 }
