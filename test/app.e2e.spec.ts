@@ -5,7 +5,10 @@ import { AppModule } from '../src/app.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from 'src/auth/dto';
 import { EditUserDto } from 'src/user/dto';
-import { CreateBookmarkDto } from 'src/bookmark/dto/dto.bookmark';
+import {
+  CreateBookmarkDto,
+  UpdateBookmarkDto,
+} from 'src/bookmark/dto/dto.bookmark';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -126,6 +129,13 @@ describe('AppController (e2e)', () => {
       link: 'www.google.com',
       description: 'A test description',
     };
+
+    const updateBookmarkDto: UpdateBookmarkDto = {
+      id: null,
+      title: "I'm a update title",
+      link: 'www.baidu.com',
+      description: 'A test update description',
+    };
     it('should get an empty bookmark list', () => {
       return spec()
         .get('/bookmark/get/bookmarkList')
@@ -134,31 +144,83 @@ describe('AppController (e2e)', () => {
         })
         .expectBodyContains('[]');
     });
-    describe('Create bookmark by user', () => {
-      it('should create a bookmark', () => {
-        return spec()
-          .post('/bookmark/create')
-          .withHeaders({
-            Authorization: 'Bearer $S{jwtToken}',
-          })
-          .withBody(createBookmarkDto)
-          .stores((req, res) => {
-            return {
-              id1: res.body.id,
-              name1: '111',
-            };
-          })
-          .expectStatus(201);
-      });
+    it('should create a bookmark', () => {
+      return spec()
+        .post('/bookmark/create')
+        .withHeaders({
+          Authorization: 'Bearer $S{jwtToken}',
+        })
+        .withBody(createBookmarkDto)
+        .stores((req, res) => {
+          updateBookmarkDto.id = res.body.id;
+          return {
+            bookmarkId: res.body.id,
+          };
+        })
+        .expectStatus(201);
     });
-
-    // it('should get a bookmark list contains an object', () => {
-    //   return spec()
-    //     .get('/bookmark/get/bookmarkList')
-    //     .withHeaders({
-    //       Authorization: 'Bearer $S{jwtToken}',
-    //     })
-    //     .expectJsonLength(1);
-    // });
+    it('should get a bookmark list with an object contains id1', () => {
+      return spec()
+        .get('/bookmark/get/bookmarkList')
+        .withHeaders({
+          Authorization: 'Bearer $S{jwtToken}',
+        })
+        .expectBodyContains('$S{bookmarkId}');
+    });
+    it('should get a get a single bookmark', () => {
+      return spec()
+        .get('/bookmark/get/single/bookmark')
+        .withQueryParams('id', '$S{bookmarkId}')
+        .withHeaders({
+          Authorization: 'Bearer $S{jwtToken}',
+        })
+        .expectStatus(200);
+    });
+    it('should update a bookmark which id is eqaul to $S{bookmarkId}', () => {
+      return spec()
+        .post('/bookmark/update/single/bookmark')
+        .withBody(updateBookmarkDto)
+        .withHeaders({
+          Authorization: 'Bearer $S{jwtToken}',
+        })
+        .expectBodyContains('www.baidu.com')
+        .expectStatus(201);
+    });
+    it('should delete a bookmark which id is eqaul to $S{bookmarkId}', () => {
+      return spec()
+        .delete('/bookmark/delete/single/bookmark')
+        .withBody({
+          id: updateBookmarkDto.id,
+        })
+        .withHeaders({
+          Authorization: 'Bearer $S{jwtToken}',
+        })
+        .expectStatus(200);
+    });
+    it('should create a bookmark list', () => {
+      return spec()
+        .post('/bookmark/createList')
+        .withBody({
+          createBookmarkDtoList: [
+            createBookmarkDto,
+            {
+              ...createBookmarkDto,
+              description: 'A second test description',
+            },
+          ],
+        })
+        .withHeaders({
+          Authorization: 'Bearer $S{jwtToken}',
+        })
+        .expectStatus(201);
+    });
+    it('should delete a bookmark list', () => {
+      return spec()
+        .delete('/bookmark/delete/bookmarkList')
+        .withHeaders({
+          Authorization: 'Bearer $S{jwtToken}',
+        })
+        .expectStatus(200);
+    });
   });
 });

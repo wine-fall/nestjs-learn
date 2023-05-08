@@ -1,7 +1,7 @@
-import { BadRequestException, GoneException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
-import { CreateBookmarkDto } from './dto';
+import { CreateBookmarkDto, UpdateBookmarkDto } from './dto';
 
 @Injectable()
 export class BookmarkService {
@@ -16,11 +16,30 @@ export class BookmarkService {
         ...createBookmarkDto,
         userId,
       };
-      console.log({ data });
       const bookmark = await this.prisma.bookmark.create({
         data,
       });
       return bookmark;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async createBookmarkListByUser(
+    userId: number,
+    createBookmarkDtoList: CreateBookmarkDto[],
+  ) {
+    try {
+      const data = createBookmarkDtoList.map((item) => {
+        return {
+          ...item,
+          userId,
+        };
+      });
+      const bookmarkList = await this.prisma.bookmark.createMany({
+        data,
+      });
+      return bookmarkList;
     } catch (error) {
       throw new Error(error);
     }
@@ -44,12 +63,49 @@ export class BookmarkService {
   }
 
   getBookmarkById(id: string) {
-    return id;
-    // const bookmark = this.prisma.bookmark.findUniqueOrThrow({
-    //   where: {
-    //     id,
-    //   },
-    // });
-    // return bookmark;
+    const bookmark = this.prisma.bookmark.findUniqueOrThrow({
+      where: {
+        id,
+      },
+    });
+    return bookmark;
+  }
+
+  async updateBookmarkById(dto: UpdateBookmarkDto) {
+    const originData = await this.prisma.bookmark.findUniqueOrThrow({
+      where: {
+        id: dto.id,
+      },
+    });
+    try {
+      const updatedBookmark = await this.prisma.bookmark.update({
+        where: {
+          id: dto.id,
+        },
+        data: {
+          ...originData,
+          ...dto,
+        },
+      });
+      return { updatedBookmark };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  deleteBookmarkById(id: string) {
+    return this.prisma.bookmark.delete({
+      where: {
+        id,
+      },
+    });
+  }
+
+  deleteBookmarkListByUserId(userId: number) {
+    return this.prisma.bookmark.deleteMany({
+      where: {
+        userId,
+      },
+    });
   }
 }

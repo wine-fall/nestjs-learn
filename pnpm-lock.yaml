@@ -94,8 +94,8 @@ devDependencies:
     specifier: 29.3.1
     version: 29.3.1(@types/node@18.11.18)(ts-node@10.9.1)
   pactum:
-    specifier: ^3.3.3
-    version: 3.3.3
+    specifier: ^3.4.0
+    version: 3.4.0
   prettier:
     specifier: ^2.3.2
     version: 2.8.7
@@ -595,8 +595,8 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
 
-  /@exodus/schemasafe@1.0.0:
-    resolution: {integrity: sha512-2cyupPIZI69HQxEAPllLXBjQp4njDKkOjYRCYxvMZe3/LY9pp9fBM3Tb1wiFAdP6Emo4v3OEbCLGj6u73Q5KLw==}
+  /@exodus/schemasafe@1.0.1:
+    resolution: {integrity: sha512-PQdbF8dGd4LnbwBlcc4ML8RKYdplm+e9sUeWBTr4zgF13/Shiuov9XznvM4T8cb1CfyKK21yTUkuAIIh/DAH/g==}
     dev: true
 
   /@humanwhocodes/config-array@0.11.8:
@@ -4268,11 +4268,11 @@ packages:
     resolution: {integrity: sha512-GkIrdBQyFlmKb7LEcSSmkALnGFuZTRTS3C6q46e1uWHAtuwRqB/Mbeg4ta8nZ7eVUglJDG4pUYpZgpVVqycUNQ==}
     dev: true
 
-  /pactum@3.3.3:
-    resolution: {integrity: sha512-W+uY8/sM7m8y8+tP5YmBRsF1gSW3wCdgFnQhh06zYjpe/GuPOI4QHIiIAXbhuL1OY9CuAK+E6on4u7eDbdDRAA==}
+  /pactum@3.4.0:
+    resolution: {integrity: sha512-GlB5G1EcUWAsKMPk2ku0ygA2PlByPHOiQtfwU2JC7X9vnNYikR35QaINZHlfiapAA8KYrIbIDAXkxnCbK9LBZA==}
     engines: {node: '>=10'}
     dependencies:
-      '@exodus/schemasafe': 1.0.0
+      '@exodus/schemasafe': 1.0.1
       deep-override: 1.0.2
       form-data-lite: 1.0.3
       json-query: 2.2.2
